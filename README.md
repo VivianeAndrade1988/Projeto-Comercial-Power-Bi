@@ -106,3 +106,5 @@ Análise referente ao ano de 2023.
 # 📎 Próximos Passos
 
 Se quiser aprofundar a análise em uma apresentação executiva, clique abaixo:
+
+[Apresentação Executiva](https://github.com/VivianeAndrade1988/Projeto-Comercial-Power-Bi/blob/main/Business_Analytics/comercial.pdf)
