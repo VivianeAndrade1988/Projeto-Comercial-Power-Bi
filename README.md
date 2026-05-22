@@ -72,8 +72,9 @@ Análise referente ao ano de 2023.
 
 ## 🧑‍💼 Vendedores
 
-- A vendedora **Julieta** teve a maior performance comercial, com faturamento de **R$ 454 mil**
-- O não atingimento das metas estava concentrado em equipes específicas
+- A vendedora **Julieta** teve a maior performance comercial, com faturamento de **R$ 454 mil**, 28% acima da meta
+- A vendadora **Izabella** teve a menor performance comercial, com faturamento de **R$ 250 mil**, -28% abaixo da meta 
+- O não atingimento das metas estava concentrado na equipe de Victor.
 - Existiam diferenças relevantes de performance entre equipes sob lideranças diferentes
 - Vendedores de alta performance serviram como benchmark para identificação de boas práticas comerciais
 - A atuação da liderança teve impacto direto nos resultados das equipes
@@ -104,4 +105,4 @@ Análise referente ao ano de 2023.
 
 # 📎 Próximos Passos
 
-Se quiser aprofundar a análise em uma apresentação executiva, clique aqui.
+Se quiser aprofundar a análise em uma apresentação executiva, clique abaixo:
