@@ -1,0 +1,131 @@
+table fVendas
+	lineageTag: 20473fe1-5d84-44d6-9ec7-e124d470cece
+
+	column nfe
+		dataType: string
+		lineageTag: 8756d6c5-79b2-4651-92a1-49200c06005a
+		summarizeBy: none
+		sourceColumn: nfe
+
+		annotation SummarizationSetBy = Automatic
+
+	column vendedor_id
+		dataType: string
+		lineageTag: 1b356c03-6420-452e-bb7c-6493d7b9531b
+		summarizeBy: none
+		sourceColumn: vendedor_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column cliente_id
+		dataType: string
+		lineageTag: d8132114-ac53-49dc-9c64-3c211820500d
+		summarizeBy: none
+		sourceColumn: cliente_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor_desconto
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 363bc428-ba12-4522-8586-4999acdc9d19
+		summarizeBy: sum
+		sourceColumn: valor_desconto
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column item_quantidade
+		dataType: int64
+		formatString: 0
+		lineageTag: 53b0aa93-a8ce-4be9-90e2-e229a75cf2f8
+		summarizeBy: sum
+		sourceColumn: item_quantidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor_unitario
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: aa776902-64dc-42d6-bfd6-d24e8f8ff8b4
+		summarizeBy: sum
+		sourceColumn: valor_unitario
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column produto_id
+		dataType: string
+		lineageTag: e497e713-d18d-4fc5-a39d-d22bfbc69d34
+		summarizeBy: none
+		sourceColumn: produto_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'dia da semana'
+		dataType: string
+		lineageTag: cbeeaa19-f8aa-4f5d-b449-78a387f0ae93
+		summarizeBy: none
+		sourceColumn: dia da semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_venda
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 982d3a78-ffc7-4427-9d46-2a6d67fd2bc0
+		summarizeBy: none
+		sourceColumn: data_venda
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column valor_bruto
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 3eba4d9e-c87c-400f-a7ff-26da27f08499
+		summarizeBy: sum
+		sourceColumn: valor_bruto
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column valor_liquido
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: b2631fac-37ef-4527-9a09-b2310bee78a6
+		summarizeBy: sum
+		sourceColumn: valor_liquido
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column ano
+		dataType: int64
+		formatString: 0
+		lineageTag: 6f94bbe9-cb42-473d-a120-f11a2a2eeced
+		summarizeBy: sum
+		sourceColumn: ano
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fVendas = m
+		mode: import
+		queryGroup: Fatos
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\vivid\OneDrive\Área de Trabalho\Projetos Portifolio\7. Comercial\EXPERIUN\Vendas 2021.xlsx"), null, true),
+				    Tabela1_Table = Fonte{[Item="Tabela1",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Tabela1_Table,{{"data_venda", type date}, {"ano", Int64.Type}, {"valor_desconto", Currency.Type}, {"item_quantidade", Int64.Type}, {"valor_unitario", Currency.Type}, {"valor_bruto", Currency.Type}, {"valor_liquido", Currency.Type}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

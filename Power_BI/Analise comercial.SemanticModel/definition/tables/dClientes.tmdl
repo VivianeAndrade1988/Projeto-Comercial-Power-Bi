@@ -1,0 +1,197 @@
+table dClientes
+	lineageTag: 3c20cbd4-b6ff-4c9a-a910-62483e316912
+
+	column id
+		dataType: string
+		lineageTag: 9ddd15c1-d026-4610-9546-45dc06df29d0
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column descricao
+		dataType: string
+		lineageTag: 2ed0cb32-fadc-4703-9588-8a0e6d270535
+		summarizeBy: none
+		sourceColumn: descricao
+
+		annotation SummarizationSetBy = Automatic
+
+	column cidade
+		dataType: string
+		lineageTag: 63de2ed7-0bef-4b34-bb84-027f54404e29
+		summarizeBy: none
+		sourceColumn: cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column estado
+		dataType: string
+		lineageTag: c53d8c3a-9e22-4cd6-a059-381e198fbf9d
+		summarizeBy: none
+		sourceColumn: estado
+
+		annotation SummarizationSetBy = Automatic
+
+	column uf
+		dataType: string
+		lineageTag: 5ccf7ae5-fca6-4fe0-b2a3-bfd07b4995bc
+		summarizeBy: none
+		sourceColumn: uf
+
+		annotation SummarizationSetBy = Automatic
+
+	column regiao
+		dataType: string
+		lineageTag: 84e6295e-c949-4efb-9a06-544cc4f85627
+		summarizeBy: none
+		sourceColumn: regiao
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recencia Dias' =
+			
+			VAR UltimaCompra =
+			    CALCULATE (
+			        MAX (fVendas[data_venda] ),
+			        FILTER (
+			            fVendas,
+			            fVendas[cliente_id]= dClientes[id]
+			        )
+			    )
+			RETURN
+			IF (
+			    ISBLANK ( UltimaCompra ),
+			    BLANK(),
+			    DATEDIFF ( UltimaCompra, TODAY(), DAY )
+			)
+		formatString: 0
+		lineageTag: 0f1f03e6-8099-4cfa-8cd6-5cb0c58079f3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Score Recencia' = ```
+			
+			SWITCH (
+			    TRUE(),
+			    [Recencia Dias] <= 30, "R5",
+			    [Recencia Dias] <= 60, "R4",
+			    [Recencia Dias] <= 90, "R3",
+			    [Recencia Dias] <= 180, "R2",
+			    "R1"
+			)
+			
+			```
+		lineageTag: 1b488217-574d-4dad-b1e4-65760abdb5a0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Frequencia =
+			
+			CALCULATE (
+			    COUNT ( fVendas[data_venda] ),
+			    FILTER (
+			        fVendas,
+			        fVendas[cliente_id] = dClientes[id]
+			    )
+			)
+		formatString: 0
+		lineageTag: 523665f7-f79d-46e0-b576-98eb809d1af0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Score Frequencia' =
+			
+			SWITCH (
+			    TRUE(),
+			    [Frequencia] >= 20, "F5",
+			    [Frequencia] >= 10, "F4",
+			    [Frequencia] >= 5, "F3",
+			    [Frequencia] >= 2, "F2",
+			    "F1"
+			)
+		lineageTag: 4591c178-2dbe-45bc-8423-72c514b12931
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Valor Total' =
+			
+			CALCULATE (
+			     [$ Faturamento],
+			    FILTER (
+			        fVendas,
+			        fVendas[cliente_id] = dClientes[id]
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 010454de-84c0-40f7-915f-0b4ceb7a96f6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column 'Score Valor' =
+			
+			SWITCH (
+			    TRUE(),
+			    [Valor Total] >= 10000, "V5",
+			    [Valor Total] >= 5000, "V4",
+			    [Valor Total] >= 2000, "V3",
+			    [Valor Total] >= 500, "V2",
+			    "V1"
+			)
+		lineageTag: 53e6d789-2d95-4af9-8ac7-f9c7c263f7a3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Segmento RFV' = ```
+			
+			SWITCH (
+			    TRUE(),
+			
+			    [Score Recencia] = "R5" &&
+			    [Score Frequencia] IN { "F4", "F5" } &&
+			    [Score Valor] IN { "V4", "V5" }, "Champions",
+			
+			    [Score Frequencia] IN { "F4", "F5" }, "Loyal Customers",
+			
+			    [Score Recencia] IN { "R4", "R5" } &&
+			    [Score Frequencia] IN { "F1", "F2" }, "New Customers",
+			
+			    [Score Recencia] IN { "R3", "R4" }, "Promising",
+			
+			    [Score Recencia] IN { "R1", "R2" } &&
+			    [Score Frequencia] IN { "F3", "F4" }, "At Risk",
+			
+			    [Score Recencia] IN { "R1", "R2" }, "Hibernating",
+			
+			    "Lost"
+			)
+			
+			```
+		lineageTag: 0fc0ee04-6192-4bd8-ad5b-6ded775d7c2a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dClientes = m
+		mode: import
+		queryGroup: Dimensões
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\vivid\OneDrive\Área de Trabalho\Projetos Portifolio\7. Comercial\EXPERIUN\Base.xlsx"), null, true),
+				    dClientes_Sheet = Fonte{[Item="dClientes",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(dClientes_Sheet, [PromoteAllScalars=true])
+				in
+				    #"Cabeçalhos Promovidos"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

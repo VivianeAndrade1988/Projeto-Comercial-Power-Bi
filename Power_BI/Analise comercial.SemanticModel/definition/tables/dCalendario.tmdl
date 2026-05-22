@@ -1,0 +1,51 @@
+table dCalendario
+	lineageTag: dfab2711-0c41-4541-8ec7-f7467115c7a6
+
+	column Date
+		formatString: General Date
+		lineageTag: b24a548c-f5d7-44b0-8b45-0b95b3c50cc3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês num' = MONTH(dCalendario[Date])
+		formatString: 0
+		lineageTag: 859c2bf6-d306-4196-b03f-cba7887d8453
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês = FORMAT(dCalendario[Date],"mmm")
+		lineageTag: 7bb887b8-a894-43f7-9b81-912cd6a409bb
+		summarizeBy: none
+		sortByColumn: 'Mês num'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ano = YEAR(dCalendario[Date])
+		formatString: 0
+		lineageTag: a9588b6e-22ed-4267-93c4-96d0aa1f346f
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'mês int' = FORMAT(dCalendario[Date],"mmmm")
+		lineageTag: 669beee9-ecad-4fb3-be35-666da2ef74eb
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCalendario = calculated
+		mode: import
+		source = ```
+				CALENDAR(
+				    DATE(YEAR(MIN(fVendas[data_venda])),1,1),
+				    DATE(YEAR(MAX(fVendas[data_venda])),12,31)
+				)
+				
+				```
+
+	annotation PBI_Id = 604d90b835e649b6b67f9f5828ce2512
+

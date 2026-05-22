@@ -1,0 +1,201 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Ano Atual",
+  "name": "Bookmark76033fdf5472bb149575",
+  "options": {
+    "targetVisualNames": []
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "ReportSectionf6595fffa0ea8e510133",
+    "filters": {
+      "byExpr": [
+        {
+          "name": "Filter060038dda4d4750c75e1",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dProduto"
+                }
+              },
+              "Property": "categoria_descricao"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter655bf6ec430d6c9ba017",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dProduto"
+                }
+              },
+              "Property": "tamanho"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter199c41900c0a6c247714",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dCliente"
+                }
+              },
+              "Property": "uf"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter42dbaf6ee7512c7d0602",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dCliente"
+                }
+              },
+              "Property": "cidade"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter2ce5178d9eae541659c1",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "fVendas"
+                }
+              },
+              "Property": "dia da semana"
+            }
+          },
+          "howCreated": 1
+        }
+      ]
+    },
+    "sections": {
+      "ReportSectionf6595fffa0ea8e510133": {
+        "filters": {
+          "byExpr": [
+            {
+              "name": "Filter1d762b5bf8bcd86aa799",
+              "type": "Categorical",
+              "filter": {
+                "Version": 2,
+                "From": [
+                  {
+                    "Name": "d",
+                    "Entity": "dCalendario",
+                    "Type": 0
+                  }
+                ],
+                "Where": [
+                  {
+                    "Condition": {
+                      "In": {
+                        "Expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "d"
+                                }
+                              },
+                              "Property": "AnoAtual"
+                            }
+                          }
+                        ],
+                        "Values": [
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'Ano Atual'"
+                              }
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "expression": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCalendario"
+                    }
+                  },
+                  "Property": "AnoAtual"
+                }
+              },
+              "howCreated": 1
+            },
+            {
+              "name": "Filter5debc8e8b3eea7656a36",
+              "type": "Categorical",
+              "expression": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCalendario"
+                    }
+                  },
+                  "Property": "MesAtual"
+                }
+              },
+              "howCreated": 1
+            }
+          ]
+        },
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "2882086035076262a809": {
+            "isHidden": true
+          },
+          "566cc7863c8879d41335": {
+            "isHidden": false
+          }
+        }
+      }
+    },
+    "objects": {
+      "merge": {
+        "outspacePane": [
+          {
+            "properties": {
+              "expanded": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "visible": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

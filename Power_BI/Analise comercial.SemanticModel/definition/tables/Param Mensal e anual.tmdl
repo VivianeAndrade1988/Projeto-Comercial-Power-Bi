@@ -1,0 +1,48 @@
+table 'Param Mensal e anual'
+	lineageTag: 5c87db94-3eb8-4a0e-9fa6-71390c9608dd
+
+	column 'Mensal e anual'
+		lineageTag: 1cc6b70d-25f8-4328-9768-001005b658f5
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Mensal e anual Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Mensal e anual Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mensal e anual Campos'
+		isHidden
+		lineageTag: 01298f7d-0341-4b2a-8ab9-8a8584aab3e6
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Mensal e anual Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mensal e anual Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: b2fad9e4-47dc-47dc-9bf4-322f257ef946
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Param Mensal e anual' = calculated
+		mode: import
+		source =
+				{
+				    ("Mensal", NAMEOF('dCalendario'[Mês]), 0),
+				    ("Anual", NAMEOF('dCalendario'[Ano]), 1)
+				}
+
+	annotation PBI_Id = ede6aae7d45e46d59d9d1f5e996aff60
+

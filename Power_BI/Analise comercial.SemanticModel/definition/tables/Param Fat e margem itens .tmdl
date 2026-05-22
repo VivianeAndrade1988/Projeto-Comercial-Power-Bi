@@ -1,0 +1,49 @@
+table 'Param Fat e margem itens '
+	lineageTag: adcec71f-15a0-44fc-b680-50c76ca4ac87
+
+	column 'Param Fat e margem itens '
+		lineageTag: 7d9452cd-4aea-40e5-a142-891ed5901bc3
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Param Fat e margem itens  Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Param Fat e margem itens  Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Param Fat e margem itens  Campos'
+		isHidden
+		lineageTag: bdb26863-be12-48d3-857e-e549d7766ed8
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Param Fat e margem itens  Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Param Fat e margem itens  Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: 12813e59-4023-401d-b2e3-420583d4cd32
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Param Fat e margem itens ' = calculated
+		mode: import
+		source =
+				{
+				    ("Faturamento", NAMEOF('Medidas'[$ Faturamento]), 0),
+				    ("Margem Bruta", NAMEOF('Medidas'[$ Margem Bruta]), 1),
+				    ("Qtd de itens vendidos", NAMEOF('Medidas'[Qtd de itens vendidos]), 2)
+				}
+
+	annotation PBI_Id = 7d606ab9b65e474ca89ce91c6bab9dd6
+

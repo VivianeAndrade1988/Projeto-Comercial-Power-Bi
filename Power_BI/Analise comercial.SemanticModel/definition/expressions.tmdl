@@ -1,0 +1,7 @@
+expression endereco = "C:\Users\psawa\Downloads\EV20\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: b128131a-9926-4683-8c40-f39c3005f788
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Text
+

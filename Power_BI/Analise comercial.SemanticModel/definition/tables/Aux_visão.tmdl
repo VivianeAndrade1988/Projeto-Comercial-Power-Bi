@@ -1,0 +1,29 @@
+table Aux_visão
+	lineageTag: a6824178-60ed-4147-b381-3304d6a29fac
+
+	column 'Coluna 1'
+		dataType: string
+		lineageTag: c76afee9-605c-43cd-bcad-44fdaef2d5e0
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Coluna 2'
+		dataType: string
+		lineageTag: b4644f9e-987f-484d-a8f8-af19fc7e57f6
+		summarizeBy: none
+		sourceColumn: Coluna 2
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Aux_visão = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUQrJT8kvVorViVYyAvKcEktSixJzFRIVclNLEsHCxkBhv8OL8xWS0ORiAQ==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t, #"Coluna 2" = _t])
+				in
+				    Fonte
+
+	annotation PBI_ResultType = Table
+

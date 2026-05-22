@@ -1,0 +1,24 @@
+relationship 41f149b2-6a8d-124f-8bda-a1fe5c08ab7c
+	fromColumn: fVendas.vendedor_id
+	toColumn: dVendedor.id
+
+relationship 4e0a6a86-1b1a-7a3c-b7df-2ca41208714c
+	fromColumn: fVendas.produto_id
+	toColumn: dProdutos.id
+
+relationship 509628e0-0faf-9eff-445a-5ea37bd3991a
+	fromColumn: fVendas.cliente_id
+	toColumn: dClientes.id
+
+relationship c9e7408a-17db-560d-87d3-59f8376cabf1
+	fromColumn: fMetas.vendedor_id
+	toColumn: dVendedor.id
+
+relationship ccaaf179-4172-bc07-c936-fcf346cfc35d
+	fromColumn: fVendas.data_venda
+	toColumn: dCalendario.Date
+
+relationship b0e8550e-c8ac-3383-21c3-cd3a1673d853
+	fromColumn: fMetas.Data
+	toColumn: dCalendario.Date
+

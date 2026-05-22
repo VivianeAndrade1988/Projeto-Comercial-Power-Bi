@@ -1,0 +1,40 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		fastCombine
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup Fatos
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup Dimensões
+
+	annotation PBI_QueryGroupOrder = 1
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["endereco","Medidas","Aux_visão","fVendas","dClientes","dProdutos","dVendedor","fMetas","Pareto","CRV"]
+
+annotation PBI_ProTooling = ["CalcGroup","DaxQueryView_Desktop","DevMode"]
+
+ref table Medidas
+ref table 'Param Gerente e Supervisor'
+ref table Aux_visão
+ref table fVendas
+ref table dClientes
+ref table dProdutos
+ref table dVendedor
+ref table fMetas
+ref table dCalendario
+ref table Pareto
+ref table CRV
+ref table 'Param Mensal e anual'
+ref table 'Param Fat e margem itens '
+
+ref cultureInfo pt-BR
+

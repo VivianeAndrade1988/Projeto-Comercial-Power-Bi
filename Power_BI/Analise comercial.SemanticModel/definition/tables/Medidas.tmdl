@@ -1,0 +1,952 @@
+table Medidas
+	lineageTag: 9c35d860-a09d-432b-b5c6-4c5773231de1
+
+	measure '$ Faturamento' = SUMX(fVendas,fVendas[valor_bruto]-fVendas[valor_desconto])
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Gerais
+		lineageTag: b1e13938-28df-4ce9-b407-6751bf75004f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure Meta = SUM(fMetas[Valor])
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Meta
+		lineageTag: 2dfc93cc-c178-4fb8-b373-5e99d2158db8
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Faturamento vs Meta' = [$ Faturamento]-[Meta]
+		displayFolder: Meta
+		lineageTag: 7e653bf7-e2fa-4e14-84d2-440d531f3292
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '$ Custo' = ```
+			
+			SUMX (
+			    fVendas, 
+			    fVendas[item_quantidade] * RELATED ( dProdutos[custoUnitario] )
+			)
+			```
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Gerais
+		lineageTag: f40229a7-bb55-4690-a34d-571ac074da84
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '$ Margem Bruta' = [$ Faturamento]-[$ Custo]
+		displayFolder: Barra de progresso
+		lineageTag: 7278f58d-ad46-43aa-9dbe-e7e6aa5a6c5e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Notas emitidas' = DISTINCTCOUNT(fVendas[nfe])
+		formatString: 0
+		displayFolder: Barra de progresso
+		lineageTag: 2f8f3b09-c0e0-4024-9fff-dcc4ceccadce
+
+	measure 'Preço médio' = DIVIDE([$ Faturamento],[Qtd de itens vendidos])
+		displayFolder: Gerais
+		lineageTag: c58944ef-28f8-437c-87ad-85497b725ed3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Valor detalhe meta' = FORMAT([% Faturamento vs meta]," ⇧ 0% ;⇩ 0% ")
+		displayFolder: UX
+		lineageTag: e62a6766-4fa1-426d-893c-3079d2e71880
+
+	measure '% Faturamento vs meta' = DIVIDE([$ Faturamento vs Meta],[Meta])
+		formatString: 0%;-0%;0%
+		displayFolder: Meta
+		lineageTag: 70e96c09-43b6-489b-89a8-92ac7c9dd7c5
+
+	measure 'Valor Coluna Faturamento' = ```
+			
+			VAR vFat = [$ Faturamento]
+			VAR vFatFormat = 
+			SWITCH(
+			    TRUE(),
+			    vFat > 1E6, FORMAT(vFat, "#0,, Mi"),
+			    vFat > 1E3, FORMAT(vFat, "#0, K"),
+			    FORMAT(vFat, "#0")
+			)
+			RETURN
+			vFatFormat
+			```
+		displayFolder: UX
+		lineageTag: e7d62e61-c94b-4e87-a347-b540d0b4e681
+
+	measure 'Cor Rótulos fat vs meta' = ```
+			
+			IF(
+			    [% Faturamento vs meta] > 0,
+			    "green",
+			    "red"
+			)
+			
+			```
+		displayFolder: UX
+		lineageTag: cabc8d35-6ed4-4f4a-9486-f0b9c05eddf0
+
+	measure 'Faturamento ano anterior' = ```
+			CALCULATE([$ Faturamento],
+			SAMEPERIODLASTYEAR(dCalendario[Date]))
+			
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Gerais
+		lineageTag: c0497c6b-99b7-4b77-8cfc-fee4f2d7a472
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Faturamento ano anterior' =
+			DIVIDE(
+			    [$ Faturamento]-[Faturamento ano anterior],
+			    [Faturamento ano anterior])
+		formatString: 0%;-0%;0%
+		displayFolder: Gerais
+		lineageTag: d243e710-dc66-4015-8611-dd71ac8dba70
+
+	measure '% Margem Bruta' = DIVIDE([$ Margem Bruta],[$ Faturamento])
+		formatString: 0%;-0%;0%
+		displayFolder: Barra de progresso
+		lineageTag: c179b051-dd43-4751-a27c-02ef838fedef
+
+	measure '% Notas Emitidas YoY (texto)' = ```
+			
+			VAR varNotasEmitidasLY = 
+			CALCULATE ( 
+			    [Notas emitidas],
+			    SAMEPERIODLASTYEAR(dCalendario[Date])
+			)
+			VAR varResultado = DIVIDE ( [Notas emitidas] - varNotasEmitidasLY, varNotasEmitidasLY )
+			RETURN
+			FORMAT(varResultado, "⇧ 0% vs ano anterior;⇩ 0% vs ano anterior")
+			```
+		displayFolder: Texto
+		lineageTag: 026c5d4d-c4fa-4d92-a2ca-ee0ed89208dc
+
+	measure '% Faturamento YoY (texto)' = FORMAT([% Faturamento ano anterior], "⇧ 0% vs ano anterior;⇩ 0% vs ano anterior")
+		displayFolder: Texto
+		lineageTag: d55d8d04-14d3-43fc-9656-76f8b1f66a40
+
+	measure '% Faturamento vs Meta (texto)' = FORMAT([% Faturamento vs Meta], "⇧ 0% acima da meta; ⇩ 0% abaixo da meta")
+		displayFolder: Texto
+		lineageTag: 342642a1-cdfc-421b-8c98-d8752c400010
+
+	measure '% Margem Bruta (texto)' = FORMAT([% Margem Bruta], "0% de margem bruta")
+		displayFolder: Texto
+		lineageTag: 1abdc0f6-d1ac-413f-9b50-aa9842dff15e
+
+	measure '% Ticket medio YoY (texto)' = ```
+			
+			VAR varTicketMedioLY = 
+			CALCULATE ( 
+			    [Preço médio],
+			    SAMEPERIODLASTYEAR ( dCalendario[Date] )
+			)
+			
+			VAR varResultado = DIVIDE ( [Preço médio] - varTicketMedioLY, varTicketMedioLY )
+			
+			RETURN
+			FORMAT(varResultado, "⇧ 0% vs ano anterior;⇩ 0% vs ano anterior")
+			```
+		displayFolder: Texto
+		lineageTag: 86b94e43-a9c1-4a15-9974-15fb9b30d8f9
+
+	measure '% Faturamento vs meta concluido' = 1+ DIVIDE([$ Faturamento vs Meta],[Meta])
+		formatString: 0%;-0%;0%
+		displayFolder: Meta
+		lineageTag: fa4bd057-90d5-4dc4-89fc-f2e7b581b802
+
+	measure 'Meta total' = 1
+		formatString: 0%;-0%;0%
+		displayFolder: Meta
+		lineageTag: 3540c5e7-48a7-41f8-9f15-9a97e89fa15a
+
+	measure 'Rank Vendedor' = ```
+			
+			RANKX(
+			    ALLSELECTED ( dVendedor[descricao] ),
+			    [$ Faturamento],
+			    ,
+			    DESC,
+			    DENSE
+			)
+			
+			```
+		formatString: 0
+		displayFolder: Gerais
+		lineageTag: 1460df42-e996-4bff-803e-87b2d58cac90
+
+	measure 'Dummy Meta Supervisor' = 0
+		displayFolder: UX
+		lineageTag: c6feae10-5098-4560-9889-a08e34e6143e
+
+		formatStringDefinition =
+				Var vMetaFormat= FORMAT([% Faturamento vs meta],
+				"⇧ 0% ;⇩ 0% ")
+				RETURN
+				"""" &
+				vMetaFormat &
+				""""
+
+	measure 'Dummy Margem TOP 5' = 0
+		displayFolder: UX
+		lineageTag: b3909498-b8c0-47ba-934c-ed77fa08f911
+
+		formatStringDefinition = ```
+				VAR vFormat = FORMAT([% Margem Bruta], "0%")
+				RETURN
+				"""" & 
+				vFormat &
+				""""
+				```
+
+	measure 'Dummy Eixo Produto' = -1
+		displayFolder: UX
+		lineageTag: 1b67a506-de66-4a7a-98f4-95614d5c9142
+
+		formatStringDefinition = """" & SELECTEDVALUE(dProdutos[Produto]) & """"
+
+	measure 'Cor Scatter Plot Vendedor' = ```
+			
+			VAR vSemBaterMeta = [% Faturamento vs Meta] < 0
+			VAR vSemCrescer = [% Faturamento ano anterior]< 0
+			RETURN
+			IF(
+			    vSemBaterMeta && vSemCrescer, 
+			    "#FA8187",
+			    "#229DB9"
+			)
+			```
+		displayFolder: UX
+		lineageTag: 6062801b-db43-4407-b9b7-d8189a33b037
+
+	measure '% Faturamento por Vendedor' = ```
+			
+			 var vTotal = CALCULATE([$ Faturamento], ALLSELECTED(dVendedor))
+			 RETURN
+			 (DIVIDE(
+			    [$ Faturamento], 
+			    vTotal
+			))
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Gerais
+		lineageTag: 74f36fcf-1cd4-4f79-a3bc-6addd4965377
+
+	measure '% Fator por Produto' = ```
+			
+			VAR vFatLY = CALCULATE([$ Faturamento], PREVIOUSYEAR(dCalendario[Date]))
+			VAR vFatLYTotal = 
+			CALCULATE(
+			    [$ Faturamento],
+			    PREVIOUSYEAR(dCalendario[Date]),
+			    ALL(dProdutos ), 
+			    VALUES(dProdutos[categoria_id])
+			)
+			VAR vFatorProduto = DIVIDE(vFatLY, vFatLYTotal)
+			RETURN
+			vFatorProduto
+			```
+		displayFolder: Meta
+		lineageTag: e67ccae7-569a-4708-8acb-99d8d3e28634
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Medida segmentação' =
+			
+			var vStatus= SELECTEDVALUE('Aux_visão')
+		displayFolder: UX
+		lineageTag: 19318843-3bfa-439a-8b81-3e1c2754597e
+
+	measure 'Qtd de itens vendidos' = SUM(fVendas[item_quantidade])
+		formatString: 0
+		displayFolder: Gerais
+		lineageTag: a44941ea-f2b7-4cc0-806a-c042c236b843
+
+	measure 'Produto mais vendido' = ```
+			
+			CALCULATE(
+			    MAX(dVendedor[descricao]),
+			    TOPN(3,
+			    ALL(dVendedor[descricao]),
+			    [$ Faturamento])
+			)
+			
+			```
+		lineageTag: 4445d7d6-d92a-4487-97fc-44925b03fc13
+
+	measure 'Max Grafico Meta' = ```
+			[$ Faturamento] + ([$ Faturamento] * 0.5)
+			
+			
+			```
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Gerais
+		lineageTag: 014bfe93-d506-420c-8262-748480843334
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Barra de progresso faturamento' = ```
+			
+			VAR vValor = [% Faturamento ano anterior concluido]   -- ex: 0.94 | 1.06 | 1.40
+			VAR vValor_formatado = FORMAT(vValor, "0%")
+			
+			// ================= FORMATAÇÕES =================
+			
+			VAR vFonte = "Cambria"
+			
+			// Texto
+			VAR vRotulo_categoria_texto =" "
+			VAR vRotulo_categoria_cor = "#3f3f3f"
+			VAR vRotulo_categoria_tam = 15
+			
+			// Valor %
+			VAR vRotulo_dados_cor = IF(vValor>=1, "green","red")
+			VAR vRotulo_dados_tam = 18
+			VAR vRotulo_dados_peso = 700
+			VAR vRotulo_dados_posicao = 230
+			
+			// Barra
+			VAR vBarra_altura = 35
+			VAR vBarra_cor =IF(vValor>=1, "#6D12B4","red")            
+			VAR vBarra_fundo_cor = "#CCCCCC"      -- fundo antes da meta
+			VAR vBarra_pos_meta_cor = "#CCCCCC"   -- cinza após a meta
+			VAR vBarra_fundo_opacidade = 9
+			
+			// Linha da meta
+			VAR vLinha_meta_larg = 3
+			VAR vLinha_meta_cor = "#4A4A4A"
+			
+			// ================= CÁLCULOS =================
+			
+			VAR vLargura_base = 190               -- até a meta (100%)
+			VAR vLargura_pos_meta = 90            -- trecho cinza após a meta
+			VAR vLargura_max = vLargura_base + vLargura_pos_meta
+			
+			VAR vLargura_barra =
+			    MIN(
+			        vLargura_max,
+			        ROUND(vLargura_base * vValor, 0)
+			    )
+			
+			VAR vPosicao_meta = vLargura_base
+			
+			RETURN
+			"data:image/svg+xml;utf8,
+			<svg viewBox='0 0 300 70' xmlns='http://www.w3.org/2000/svg'>
+			
+			  <!-- Fundo até a meta -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_base & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_fundo_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Fundo após a meta (SEMPRE visível) -->
+			  <rect x='" & vLargura_base & "' y='38'
+			        width='" & vLargura_pos_meta & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_pos_meta_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Barra progresso (pode ultrapassar a meta) -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_barra & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_cor & "' />
+			
+			  <!-- Linha da meta (por cima de tudo) -->
+			  <rect x='" & vPosicao_meta & "' y='33'
+			        width='" & vLinha_meta_larg & "'
+			        height='" & (vBarra_altura + 10) & "'
+			        fill='" & vLinha_meta_cor & "' />
+			
+			  <!-- Texto Meta -->
+			  <text x='0' y='26'
+			        fill='" & vRotulo_categoria_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_categoria_tam & "'>
+			        " & vRotulo_categoria_texto & "
+			  </text>
+			
+			  <!-- Valor % -->
+			  <text x='" & vRotulo_dados_posicao & "' y='26'
+			        fill='" & vRotulo_dados_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_dados_tam & "'
+			        font-weight='" & vRotulo_dados_peso & "'>
+			        " & vValor_formatado & "
+			  </text>
+			
+			</svg>"
+			
+			```
+		displayFolder: Barra de progresso
+		lineageTag: 0a063b25-2a42-4c6f-85f3-938478d5b068
+
+	measure '% Faturamento ano anterior concluido' =
+			1+ DIVIDE(
+			    [$ Faturamento]-[Faturamento ano anterior],
+			    [Faturamento ano anterior])
+		displayFolder: Barra de progresso
+		lineageTag: e3572ddd-9fd6-436f-9cd3-d18033e38716
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Quantidade Top 3' =
+			
+			IF(
+			    [Rank Vendedor] <= 3,
+			    [Qtd de itens vendidos]
+			)
+		formatString: 0
+		displayFolder: Gerais
+		lineageTag: 7c51bd30-d2ef-409a-ad35-4e8998caf1c6
+
+	measure 'qtd de produtos' = COUNTROWS(dProdutos)
+		formatString: 0
+		displayFolder: Gerais
+		lineageTag: ecfef50f-821f-447d-85c1-07fe2a42ec08
+
+	measure 'Margem ano anterior' =
+			CALCULATE([$ Margem Bruta],
+			SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Gerais
+		lineageTag: 3adfc065-60c0-4312-b878-8bb58e2f4a6f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Margem ano anterior concluido' =
+			1+ DIVIDE(
+			    [$ Margem Bruta]-[Margem ano anterior],
+			    [Margem ano anterior])
+		displayFolder: Barra de progresso
+		lineageTag: 7aaee2bd-6793-460c-8be0-26467b9163a9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Barra de progresso Margem' = ```
+			
+			VAR vValor = [% Margem ano anterior concluido]   -- ex: 0.94 | 1.06 | 1.40
+			VAR vValor_formatado = FORMAT(vValor, "0%")
+			
+			// ================= FORMATAÇÕES =================
+			
+			VAR vFonte = "Cambria"
+			
+			// Texto
+			VAR vRotulo_categoria_texto = ""
+			VAR vRotulo_categoria_cor = "#3f3f3f"
+			VAR vRotulo_categoria_tam = 15
+			
+			// Valor %
+			VAR vRotulo_dados_cor = IF(vValor>=1, "green","red")
+			VAR vRotulo_dados_tam = 18
+			VAR vRotulo_dados_peso = 700
+			VAR vRotulo_dados_posicao = 230
+			
+			// Barra
+			VAR vBarra_altura = 50
+			VAR vBarra_cor =IF(vValor>=1, "#6D12B4","red")            
+			VAR vBarra_fundo_cor = "#CCCCCC"      -- fundo antes da meta
+			VAR vBarra_pos_meta_cor = "#CCCCCC"   -- cinza após a meta
+			VAR vBarra_fundo_opacidade = 9
+			
+			// Linha da meta
+			VAR vLinha_meta_larg = 3
+			VAR vLinha_meta_cor = "#4A4A4A"
+			
+			// ================= CÁLCULOS =================
+			
+			VAR vLargura_base = 190               -- até a meta (100%)
+			VAR vLargura_pos_meta = 90            -- trecho cinza após a meta
+			VAR vLargura_max = vLargura_base + vLargura_pos_meta
+			
+			VAR vLargura_barra =
+			    MIN(
+			        vLargura_max,
+			        ROUND(vLargura_base * vValor, 0)
+			    )
+			
+			VAR vPosicao_meta = vLargura_base
+			
+			RETURN
+			"data:image/svg+xml;utf8,
+			<svg viewBox='0 0 300 70' xmlns='http://www.w3.org/2000/svg'>
+			
+			  <!-- Fundo até a meta -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_base & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_fundo_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Fundo após a meta (SEMPRE visível) -->
+			  <rect x='" & vLargura_base & "' y='38'
+			        width='" & vLargura_pos_meta & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_pos_meta_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Barra progresso (pode ultrapassar a meta) -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_barra & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_cor & "' />
+			
+			  <!-- Linha da meta (por cima de tudo) -->
+			  <rect x='" & vPosicao_meta & "' y='33'
+			        width='" & vLinha_meta_larg & "'
+			        height='" & (vBarra_altura + 10) & "'
+			        fill='" & vLinha_meta_cor & "' />
+			
+			  <!-- Texto Meta -->
+			  <text x='0' y='26'
+			        fill='" & vRotulo_categoria_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_categoria_tam & "'>
+			        " & vRotulo_categoria_texto & "
+			  </text>
+			
+			  <!-- Valor % -->
+			  <text x='" & vRotulo_dados_posicao & "' y='26'
+			        fill='" & vRotulo_dados_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_dados_tam & "'
+			        font-weight='" & vRotulo_dados_peso & "'>
+			        " & vValor_formatado & "
+			  </text>
+			
+			</svg>"
+			
+			```
+		displayFolder: Barra de progresso
+		lineageTag: a9d66fb3-52f0-41d8-98a8-f7f8c6279ff8
+
+	measure 'notas emitidas Ano anterior' = ```
+			CALCULATE ( 
+			    [Notas emitidas],
+			    SAMEPERIODLASTYEAR(dCalendario[Date]))
+			```
+		formatString: 0
+		displayFolder: Barra de progresso
+		lineageTag: 688a4d9d-55bb-4b1e-855a-7097e72a8fba
+
+	measure '% Notas emitidas ano anterior concluido' =
+			1+ DIVIDE(
+			    [Notas emitidas]-[notas emitidas Ano anterior],
+			    [notas emitidas Ano anterior])
+		displayFolder: Barra de progresso
+		lineageTag: 3eecf1ff-81d0-4506-9048-3fa65670107f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Barra de progresso Notas emitidas' = ```
+			
+			VAR vValor = [% Notas emitidas ano anterior concluido]   -- ex: 0.94 | 1.06 | 1.40
+			VAR vValor_formatado = FORMAT(vValor, "0%")
+			
+			// ================= FORMATAÇÕES =================
+			
+			VAR vFonte = "Cambria"
+			
+			// Texto
+			VAR vRotulo_categoria_texto = ""
+			VAR vRotulo_categoria_cor = "#3f3f3f"
+			VAR vRotulo_categoria_tam = 15
+			
+			// Valor %
+			VAR vRotulo_dados_cor = IF(vValor>=1, "green","red")
+			VAR vRotulo_dados_tam = 18
+			VAR vRotulo_dados_peso = 700
+			VAR vRotulo_dados_posicao = 230
+			
+			// Barra
+			VAR vBarra_altura = 35
+			VAR vBarra_cor =IF(vValor>=1, "#6D12B4","red")            
+			VAR vBarra_fundo_cor = "#CCCCCC"      -- fundo antes da meta
+			VAR vBarra_pos_meta_cor = "#CCCCCC"   -- cinza após a meta
+			VAR vBarra_fundo_opacidade = 9
+			
+			// Linha da meta
+			VAR vLinha_meta_larg = 3
+			VAR vLinha_meta_cor = "#4A4A4A"
+			
+			// ================= CÁLCULOS =================
+			
+			VAR vLargura_base = 190               -- até a meta (100%)
+			VAR vLargura_pos_meta = 90            -- trecho cinza após a meta
+			VAR vLargura_max = vLargura_base + vLargura_pos_meta
+			
+			VAR vLargura_barra =
+			    MIN(
+			        vLargura_max,
+			        ROUND(vLargura_base * vValor, 0)
+			    )
+			
+			VAR vPosicao_meta = vLargura_base
+			
+			RETURN
+			"data:image/svg+xml;utf8,
+			<svg viewBox='0 0 300 70' xmlns='http://www.w3.org/2000/svg'>
+			
+			  <!-- Fundo até a meta -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_base & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_fundo_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Fundo após a meta (SEMPRE visível) -->
+			  <rect x='" & vLargura_base & "' y='38'
+			        width='" & vLargura_pos_meta & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_pos_meta_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Barra progresso (pode ultrapassar a meta) -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_barra & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_cor & "' />
+			
+			  <!-- Linha da meta (por cima de tudo) -->
+			  <rect x='" & vPosicao_meta & "' y='33'
+			        width='" & vLinha_meta_larg & "'
+			        height='" & (vBarra_altura + 10) & "'
+			        fill='" & vLinha_meta_cor & "' />
+			
+			  <!-- Texto Meta -->
+			  <text x='0' y='26'
+			        fill='" & vRotulo_categoria_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_categoria_tam & "'>
+			        " & vRotulo_categoria_texto & "
+			  </text>
+			
+			  <!-- Valor % -->
+			  <text x='" & vRotulo_dados_posicao & "' y='26'
+			        fill='" & vRotulo_dados_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_dados_tam & "'
+			        font-weight='" & vRotulo_dados_peso & "'>
+			        " & vValor_formatado & "
+			  </text>
+			
+			</svg>"
+			
+			```
+		displayFolder: Barra de progresso
+		lineageTag: ef21f93c-2ba8-4ebe-90ab-da676dcb3ecb
+
+	measure 'Valor detalhe Faturamento' =
+			FORMAT([% Faturamento ano anterior],
+			"⇧ 0% ;⇩ 0% ")
+		displayFolder: UX
+		lineageTag: 9b83095b-96ef-4f5d-a129-8028e10d3042
+
+	measure 'Barra de progresso faturamento vs Meta' = ```
+			
+			VAR vValor = [% Faturamento vs meta concluido]   -- ex: 0.94 | 1.06 | 1.40
+			VAR vValor_formatado = FORMAT(vValor, "0%")
+			
+			// ================= FORMATAÇÕES =================
+			
+			VAR vFonte = "Cambria"
+			
+			// Texto
+			VAR vRotulo_categoria_texto = "Vs Meta"
+			VAR vRotulo_categoria_cor = "#3f3f3f"
+			VAR vRotulo_categoria_tam = 15
+			
+			// Valor %
+			VAR vRotulo_dados_cor = IF(vValor>=1, "green","red")
+			VAR vRotulo_dados_tam = 18
+			VAR vRotulo_dados_peso = 700
+			VAR vRotulo_dados_posicao = 70
+			
+			// Barra
+			VAR vBarra_altura = 35
+			VAR vBarra_cor =IF(vValor>=1, "#6D12B4","red")            
+			VAR vBarra_fundo_cor = "#CCCCCC"      -- fundo antes da meta
+			VAR vBarra_pos_meta_cor = "#CCCCCC"   -- cinza após a meta
+			VAR vBarra_fundo_opacidade = 9
+			
+			// Linha da meta
+			VAR vLinha_meta_larg = 3
+			VAR vLinha_meta_cor = "#4A4A4A"
+			
+			// ================= CÁLCULOS =================
+			
+			VAR vLargura_base = 190               -- até a meta (100%)
+			VAR vLargura_pos_meta = 90            -- trecho cinza após a meta
+			VAR vLargura_max = vLargura_base + vLargura_pos_meta
+			
+			VAR vLargura_barra =
+			    MIN(
+			        vLargura_max,
+			        ROUND(vLargura_base * vValor, 0)
+			    )
+			
+			VAR vPosicao_meta = vLargura_base
+			
+			RETURN
+			"data:image/svg+xml;utf8,
+			<svg viewBox='0 0 300 70' xmlns='http://www.w3.org/2000/svg'>
+			
+			  <!-- Fundo até a meta -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_base & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_fundo_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Fundo após a meta (SEMPRE visível) -->
+			  <rect x='" & vLargura_base & "' y='38'
+			        width='" & vLargura_pos_meta & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_pos_meta_cor & "'
+			        opacity='" & vBarra_fundo_opacidade & "' />
+			
+			  <!-- Barra progresso (pode ultrapassar a meta) -->
+			  <rect x='0' y='38'
+			        width='" & vLargura_barra & "'
+			        height='" & vBarra_altura & "'
+			        fill='" & vBarra_cor & "' />
+			
+			  <!-- Linha da meta (por cima de tudo) -->
+			  <rect x='" & vPosicao_meta & "' y='33'
+			        width='" & vLinha_meta_larg & "'
+			        height='" & (vBarra_altura + 10) & "'
+			        fill='" & vLinha_meta_cor & "' />
+			
+			  <!-- Texto Meta -->
+			  <text x='0' y='26'
+			        fill='" & vRotulo_categoria_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_categoria_tam & "'>
+			        " & vRotulo_categoria_texto & "
+			  </text>
+			
+			  <!-- Valor % -->
+			  <text x='" & vRotulo_dados_posicao & "' y='26'
+			        fill='" & vRotulo_dados_cor & "'
+			        font-family='" & vFonte & "'
+			        font-size='" & vRotulo_dados_tam & "'
+			        font-weight='" & vRotulo_dados_peso & "'>
+			        " & vValor_formatado & "
+			  </text>
+			
+			</svg>"
+			
+			```
+		displayFolder: Barra de progresso
+		lineageTag: 2a128385-16a5-42ba-abc8-9b5c950f7f43
+
+	measure 'Vendedor selecionado' = SELECTEDVALUE(dVendedor[descricao],"Selecione um vendedor")
+		displayFolder: Gerais
+		lineageTag: 466a9607-a728-4dce-8830-d155e0a135a6
+
+	measure 'Dummy meta Faturamento' = 0
+		displayFolder: UX
+		lineageTag: 3741c31d-bb77-4f2b-a880-ed48b86e32f4
+
+		formatStringDefinition = ```
+				Var vMetaFormat= FORMAT([% Faturamento ano anterior],
+				"⇧ 0% ;⇩ 0% ")
+				RETURN
+				"""" &
+				vMetaFormat &
+				""""
+				
+				```
+
+	measure 'Dummy Faturamento vs ano ant' = 0
+		displayFolder: UX
+		lineageTag: 404b74e6-597b-49fa-a101-427d73e6ea4d
+
+		formatStringDefinition =
+				Var vFatvsAnoAntFormat= FORMAT([% Faturamento ano anterior],
+				"⇧ 0% ;⇩ 0% ")
+				RETURN
+				"""" &
+				vFatvsAnoAntFormat &
+				""""
+
+	measure 'Cor Rótulos fat vs ano ant' =
+			
+			IF(
+			    [% Faturamento ano anterior] > 0,
+			    "green",
+			    "red")
+		displayFolder: UX
+		lineageTag: 3b854489-5d12-46f2-a576-bcb06b10e5ff
+
+	measure 'Cor Rótulos teste' =
+			
+			VAR vValor = SELECTEDMEASURE()
+			RETURN
+			IF(
+			    NOT ISBLANK(vValor) && vValor > 0,
+			    "#2ECC71",   -- verde
+			    "#FA8187"    -- vermelho
+			)
+		displayFolder: UX
+		lineageTag: 33387a75-bd5c-4bb3-bdd2-cde851596f3b
+
+	measure 'Valor detalhe (param)' =
+			
+			VAR vValor = SELECTEDMEASURE()
+			RETURN
+			IF(
+			    ISBLANK(vValor),
+			    BLANK(),
+			    IF(
+			        vValor > 0,
+			        UNICHAR(9650) & " " & FORMAT(vValor, "0%"),
+			        UNICHAR(9660) & " " & FORMAT(ABS(vValor), "0%")
+			    )
+			)
+		displayFolder: UX
+		lineageTag: c6948af3-e4b2-4dd5-b5ec-2370d09f91c1
+
+	measure 'Parametro delecionado' = SELECTEDVALUE('Param Fat e margem itens'[Name])
+		displayFolder: Gerais
+		lineageTag: 59cf1927-4d21-4222-98e4-5aaa1270fc30
+
+	measure 'Melhor Mês FAT' = ```
+			
+			VAR TabelaMeses =
+			    ADDCOLUMNS(
+			        SUMMARIZE(
+			            dCalendario,
+			            dCalendario[Ano],
+			            dCalendario[mês int]
+			        ),
+			        "FatMes", [$ Faturamento]
+			    )
+			
+			VAR TopMes =
+			    TOPN(1, TabelaMeses, [FatMes], DESC)
+			
+			RETURN
+			MAXX(
+			    TopMes,
+			    dCalendario[mês int]
+			)
+			
+			```
+		displayFolder: Barra de progresso
+		lineageTag: 7b587890-053d-44c5-826d-8719ec77ce3b
+
+	measure 'Melhor mês texto' = FORMAT([Melhor Mês FAT], " Melhor mês:")
+		displayFolder: Texto
+		lineageTag: c818ffa2-ea1a-4885-a205-2127cb04d3f2
+
+	measure 'Cor Rótulos fat vs meta colunas' = ```
+			
+			IF(
+			    [% Faturamento vs meta] > 0,
+			    "#6D12B4",
+			    "#CCCCCC"
+			)
+			
+			```
+		displayFolder: UX
+		lineageTag: 1a8bd93a-2a5d-4b6a-8daf-a6083ee65a15
+
+	measure 'Cor Rótulos fat vs ano ant coluna' =
+			
+			IF(
+			    [% Faturamento ano anterior] > 0,
+			    "#6D12B4",
+			    "#CCCCCC")
+		displayFolder: UX
+		lineageTag: 326f365d-2f79-46bb-842e-cf119943c510
+
+	measure '% Margem vs meta' =
+			
+			
+			var vmargembrutavsmeta = [$ Margem Bruta]-[Meta]
+			
+			RETURN
+			
+			1+ DIVIDE(vmargembrutavsmeta,[Meta])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Meta
+		lineageTag: bfcddd25-1b87-4966-a940-56e247a8d5a0
+
+	measure '% Notas emitidas vs meta' =
+			
+			
+			var vmargembrutavsmeta = [Notas emitidas]-[Meta]
+			
+			RETURN
+			
+			1+ DIVIDE(vmargembrutavsmeta,[Meta])
+		displayFolder: Meta
+		lineageTag: ce5577f9-5036-4733-bda3-1484f3984402
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Melhor Mês MARGEM' =
+			
+			VAR TabelaMeses =
+			    ADDCOLUMNS(
+			        SUMMARIZE(
+			            dCalendario,
+			            dCalendario[Ano],
+			            dCalendario[mês int]
+			        ),
+			        "FatMes", [$ Margem Bruta]
+			    )
+			
+			VAR TopMes =
+			    TOPN(1, TabelaMeses, [FatMes], DESC)
+			
+			RETURN
+			MAXX(
+			    TopMes,
+			    dCalendario[mês int]
+			)
+		displayFolder: Barra de progresso
+		lineageTag: d839db11-8804-4a1b-ba61-bdc0a7844411
+
+	measure 'Melhor Mês QTD DE VENDAS' =
+			
+			VAR TabelaMeses =
+			    ADDCOLUMNS(
+			        SUMMARIZE(
+			            dCalendario,
+			            dCalendario[Ano],
+			            dCalendario[mês int]
+			        ),
+			        "FatMes", [Notas emitidas]
+			    )
+			
+			VAR TopMes =
+			    TOPN(1, TabelaMeses, [FatMes], DESC)
+			
+			RETURN
+			MAXX(
+			    TopMes,
+			    dCalendario[mês int]
+			)
+		displayFolder: Barra de progresso
+		lineageTag: 6c0d2cb2-638b-43a0-ae3a-0c266372083e
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Colunas Removidas" = Table.RemoveColumns(Fonte,{"Coluna 1"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+

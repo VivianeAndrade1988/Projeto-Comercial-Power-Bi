@@ -1,0 +1,239 @@
+table Pareto
+	lineageTag: e119098c-9827-45b6-b9ca-5fdd33605360
+
+	measure 'Faturamento acumulado clientes' = ```
+			
+			var vFaturamentoContexto= [$ Faturamento]
+			var vFaturamentoTotal= 
+			CALCULATE(
+			    [$ Faturamento],ALLSELECTED(dClientes))
+			
+			var vFaturamentoAcumulado= 
+			CALCULATE(
+			    [$ Faturamento],
+			    FILTER(
+			        ALLSELECTED(dClientes),
+			        [$ Faturamento] >= vFaturamentoContexto
+			    )
+			)
+			
+			RETURN
+			
+			vFaturamentoAcumulado
+			```
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Faturamento
+		lineageTag: dd7bbb3c-37a3-4ea4-a3ab-c035a8250383
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Ranking Poduto' =
+			
+			RANKX(
+			    ALLSELECTED(dProdutos[Produto]),
+			    [$ Faturamento],
+			    ,
+			    DESC,
+			    DENSE
+			
+			)
+		formatString: 0
+		lineageTag: 5db8fc56-c1b1-405b-b798-d83d478bab59
+
+	measure 'Ranking Produto 2' =
+			
+			RANKX(
+			    ALL(dProdutos[id]),
+			    [$ Faturamento],
+			    ,
+			    DESC,
+			    DENSE
+			)
+		formatString: 0
+		lineageTag: 600a37cb-c4a4-4893-8d4a-f89125233ff4
+
+	measure 'Faturamento Total Produto 2' =
+			
+			CALCULATE(
+			    [$ Faturamento],
+			    ALLSELECTED(dProdutos[id])
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Faturamento
+		lineageTag: de551b38-7c7e-42d5-b919-e0acfafe2de3
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Acumulado Produto' =
+			
+			DIVIDE(
+			    [Faturameto acumulado xp],
+			    [Faturamento Total]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 0a9e28e6-cddc-4349-ad98-987ab8ff20e7
+
+	measure 'Faturameto acumulado xp' = ```
+			
+			var vFaturamentoContexto=[$ Faturamento]
+			var vfaturamentoTotal= CALCULATE([$ Faturamento], ALLSELECTED(dProdutos[Produto]))
+			var vFaturamentoAcumulado= 
+			CALCULATE(  
+			    [$ Faturamento],
+			    FILTER(
+			        ALLSELECTED(dProdutos[Produto]),
+			        [$ Faturamento] >= vFaturamentoContexto))
+			
+			return
+			vFaturamentoAcumulado
+			
+			```
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Faturamento
+		lineageTag: 24681826-41fb-4fa7-8c11-a2db76e9c734
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '% Pareto (xp)' =
+			
+			var vFaturamentoTotal= CALCULATE([$ Faturamento],ALLSELECTED(dProdutos[id]))
+			
+			return
+			DIVIDE([Faturameto acumulado xp],vFaturamentoTotal)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2b17f580-911b-4c6c-bf59-0462c36cbb21
+
+	measure 'Cor pareto xp' = ```
+			
+			IF(
+			    [% Pareto (xp)]<=0.8, "#6B32D9",
+			    "#E8E8E8")
+			
+			```
+		lineageTag: 18cb929a-deb8-4ac7-859e-c3b7d839a0e4
+
+	measure 'Faturamento 80% xp' =
+			
+			CALCULATE(
+			    [$ Faturamento],
+			    FILTER(
+			        ALLSELECTED(dProdutos),
+			        [Curva ABC]="A"))
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Faturamento
+		lineageTag: 4276377e-05b6-4cc3-8d15-47e6de346118
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Produtos 80% Fat XP' =
+			
+			COUNTROWS(
+			    FILTER(
+			        ALLSELECTED(dProdutos[Produto]),
+			        [% Acumulado Produto]<= 0.80
+			    )
+			)
+		formatString: 0
+		lineageTag: 05598665-8b6a-4ce8-a6c8-3889a5a22ca7
+
+	measure 'Faturamento Acumulado' =
+			
+			VAR RankAtual = [Ranking Poduto]
+			RETURN
+			CALCULATE(
+			    [$ Faturamento],
+			    FILTER(
+			        ALLSELECTED ( dProdutos[Produto] ),
+			        [Ranking Poduto] <= RankAtual
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Faturamento
+		lineageTag: 60ff0ed7-f565-4125-b2eb-2c03b1443f31
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Faturamento Total' =
+			
+			CALCULATE(
+			    [$ Faturamento],
+			    ALLSELECTED ( dProdutos )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Faturamento
+		lineageTag: b6ea33c1-1e4c-4981-88b0-0df8656400d7
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Curva ABC' =
+			
+			SWITCH(
+			    TRUE(),
+			    [% Acumulado Produto] <= 0.80, "A",
+			    [% Acumulado Produto] <= 0.95, "B",
+			    "C"
+			)
+		displayFolder: Curva ABC
+		lineageTag: 715aa71f-4113-4c11-b13e-c95172ef0308
+
+	measure 'Faturamento Grupo A' =
+			
+			CALCULATE(
+			    [$ Faturamento],
+			    FILTER(
+			        ALLSELECTED ( dProdutos[Produto] ),
+			        [Curva ABC] ="A"
+			    )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		displayFolder: Curva ABC
+		lineageTag: ba91532f-69fe-4234-b7c3-a7b9b78a6edc
+
+	measure 'Faturamento Grupo b' =
+			
+			CALCULATE(
+			    [$ Faturamento],
+			    FILTER(
+			        ALLSELECTED ( dProdutos[Produto] ),
+			        [Curva ABC]= "B"
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Curva ABC
+		lineageTag: 0ea316ae-02ea-4499-94cf-70de39cf19a1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Faturamento Grupo C' =
+			
+			CALCULATE(
+			    [$ Faturamento],
+			    FILTER(
+			        ALLSELECTED ( dProdutos[Produto] ),
+			        [Curva ABC] ="C"
+			    )
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Curva ABC
+		lineageTag: a114a9de-cd4e-4005-8b12-789313bf842e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column 'Coluna 1'
+		dataType: string
+		lineageTag: e62bd565-7bd6-459b-a368-f586f5012745
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Pareto = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t])
+				in
+				    Fonte
+
+	annotation PBI_ResultType = Table
+

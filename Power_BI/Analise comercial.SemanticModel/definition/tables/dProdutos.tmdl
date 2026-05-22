@@ -1,0 +1,78 @@
+table dProdutos
+	lineageTag: 3e31231a-8b1b-4203-9a1c-9c15c6ef2c7f
+
+	column id
+		dataType: string
+		lineageTag: a32ab37e-6f50-41c0-be12-70a0e35abd43
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column custoUnitario
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 77c67256-97fe-46be-9f3a-83d17f508a1b
+		summarizeBy: none
+		sourceColumn: custoUnitario
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column categoria_descricao
+		dataType: string
+		lineageTag: 122337f6-934c-4016-a361-e7dc4680df26
+		summarizeBy: none
+		sourceColumn: categoria_descricao
+
+		annotation SummarizationSetBy = Automatic
+
+	column foto_produto
+		dataType: string
+		lineageTag: 1be1afe1-675b-4e32-ae9d-18b9356d502e
+		dataCategory: ImageUrl
+		summarizeBy: none
+		sourceColumn: foto_produto
+
+		annotation SummarizationSetBy = Automatic
+
+	column categoria_id
+		dataType: string
+		lineageTag: aac3d74e-db5e-43a6-87c2-42f0b3cf01a4
+		summarizeBy: none
+		sourceColumn: categoria_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Produto
+		dataType: string
+		lineageTag: 4f3c2a75-9e91-490d-b416-cea2ec9f6b40
+		summarizeBy: none
+		sourceColumn: Produto
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dProdutos = m
+		mode: import
+		queryGroup: Dimensões
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\vivid\OneDrive\Área de Trabalho\Projetos Portifolio\7. Comercial\EXPERIUN\Base.xlsx"), null, true),
+				    #"Linhas Filtradas" = Table.SelectRows(Fonte, each ([Name] = "dProdutos")),
+				    dProdutos_Sheet = #"Linhas Filtradas"{[Item="dProdutos",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(dProdutos_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"custoUnitario", Currency.Type}}),
+				    #"Linhas Classificadas" = Table.Sort(#"Tipo Alterado",{{"id", Order.Ascending}}),
+				    #"Consulta Acrescentada" = Table.Combine({#"Linhas Classificadas", #"Linhas Classificadas"}),
+				    #"Colunas Mescladas" = Table.CombineColumns(#"Consulta Acrescentada",{"descricao", "tamanho"},Combiner.CombineTextByDelimiter("- ", QuoteStyle.None),"Produto"),
+				    #"Linhas Filtradas1" = Table.SelectRows(#"Colunas Mescladas", each [id] <> 0),
+				    #"Linhas Classificadas1" = Table.Sort(#"Linhas Filtradas1",{{"id", Order.Ascending}}),
+				    #"Duplicatas Removidas" = Table.Distinct(#"Linhas Classificadas1", {"id", "Produto"})
+				in
+				    #"Duplicatas Removidas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,234 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY24SU08",
+      "reportVersionAtImport": {
+        "visual": "1.8.93",
+        "report": "2.0.93",
+        "page": "1.3.93"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "AccessibleDefault",
+      "reportVersionAtImport": {
+        "visual": "1.8.93",
+        "report": "2.0.93",
+        "page": "1.3.93"
+      },
+      "type": "SharedResources"
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "Filter060038dda4d4750c75e1",
+        "displayName": "Categoria do produto",
+        "ordinal": 0,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dProduto"
+              }
+            },
+            "Property": "categoria_descricao"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User",
+        "objects": {
+          "general": [
+            {
+              "properties": {}
+            }
+          ]
+        }
+      },
+      {
+        "name": "Filter655bf6ec430d6c9ba017",
+        "displayName": "Tamanho do produto",
+        "ordinal": 1,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dProduto"
+              }
+            },
+            "Property": "tamanho"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "Filter199c41900c0a6c247714",
+        "displayName": "UF do cliente",
+        "ordinal": 2,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dCliente"
+              }
+            },
+            "Property": "uf"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "Filter42dbaf6ee7512c7d0602",
+        "displayName": "Cidade do cliente",
+        "ordinal": 3,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dCliente"
+              }
+            },
+            "Property": "cidade"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "Filter2ce5178d9eae541659c1",
+        "ordinal": 4,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fVendas"
+              }
+            },
+            "Property": "dia da semana"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User",
+        "objects": {
+          "general": [
+            {
+              "properties": {}
+            }
+          ]
+        }
+      }
+    ],
+    "filterSortOrder": "Custom"
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          },
+          "visible": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "enlightenWaffleChartC94C0BDE416B413A8071A92B5E75A718",
+    "simpleImageEBC4593F96F1425FB3D84C5BF02B5075",
+    "powerKPI462CE5C2666F4EC8A8BDD7E5587320A3",
+    "ChicletSlicer1448559807354",
+    "socialNetworkGraph99E9F31DDFD7429BACA50118466E4D11",
+    "ZoomChartsNetChartFreeD1C58E3B59077E6D06A4CB9B0D4E2029A917",
+    "journeyGraph1859AB39DB23421488ADF752BCB05167",
+    "sankey02300D1BE6F5427989F3DE31CCA9E0F32020",
+    "NetworkNavigator1550434005853",
+    "ClusterMap1652434605854",
+    "dlpbicolviz9DB36676E8424E35AC5F57458A84BACBX",
+    "htmlContent443BE3AD55E043BF878BED274D3A6855",
+    "synopticPanelByOKVIZC365478550CD4DC0A2ED985DC3E23EED",
+    "paretoEDD8E69761BA4B7BB3AA6D813990D7BF",
+    "enlightenDataStoryDDFB78A6143E42CFAFBC50CCF18D978D",
+    "ImageGrid_FC5183B9_926C_45E0_B5F7_0CE9EAF1DA9B"
+  ],
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "AccessibleDefault",
+          "path": "BuiltInThemes/AccessibleDefault.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "CY24SU08",
+          "path": "BaseThemes/CY24SU08.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "Comercial_1.17197523641997523.png",
+          "path": "Comercial_1.17197523641997523.png",
+          "type": "Image"
+        },
+        {
+          "name": "Comercial_Real_vs_Meta04269012032105102.png",
+          "path": "Comercial_Real_vs_Meta04269012032105102.png",
+          "type": "Image"
+        },
+        {
+          "name": "Segmenta__o_de_produtos_29625866351182982.png",
+          "path": "Segmenta__o_de_produtos_29625866351182982.png",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultFilterActionIsDataFilter": true,
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  },
+  "slowDataSourceSettings": {
+    "isCrossHighlightingDisabled": false,
+    "isSlicerSelectionsButtonEnabled": false,
+    "isFilterSelectionsButtonEnabled": false,
+    "isFieldWellButtonEnabled": false,
+    "isApplyAllButtonEnabled": false
+  }
+}

@@ -1,0 +1,48 @@
+table 'Param Gerente e Supervisor'
+	lineageTag: 18d72125-06f4-4209-8be6-6155a8754a00
+
+	column Parâmetro2
+		lineageTag: 08e70320-3391-483d-935e-7935b76abada
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parâmetro2 Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Parâmetro2 Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro2 Campos'
+		isHidden
+		lineageTag: 26f34838-978b-45b7-8d7c-85e2de1ccda9
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parâmetro2 Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro2 Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: 3ca86809-355e-4e01-b95a-6b1205d5fa3d
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Param Gerente e Supervisor' = calculated
+		mode: import
+		source =
+				{
+				    ("Gerente", NAMEOF('dVendedor'[gerente_descricao]), 0),
+				    ("Supervisor", NAMEOF('dVendedor'[supervisor_descricao]), 1)
+				}
+
+	annotation PBI_Id = 05a6ffc9c67b47f8af1911ef3f7e9556
+

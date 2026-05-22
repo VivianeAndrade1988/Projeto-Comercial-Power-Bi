@@ -1,0 +1,189 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "🔁 Todos",
+  "name": "Bookmarka2db84c332e8a0b59877",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "409dc71560888e21aae5",
+      "da660f9a71d9042206a6",
+      "d62cd090a095e21c6404"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "ReportSectiondbedae4082706cac4e35",
+    "filters": {
+      "byExpr": [
+        {
+          "name": "Filter060038dda4d4750c75e1",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dProduto"
+                }
+              },
+              "Property": "categoria_descricao"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter655bf6ec430d6c9ba017",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dProduto"
+                }
+              },
+              "Property": "tamanho"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter199c41900c0a6c247714",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dCliente"
+                }
+              },
+              "Property": "uf"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter42dbaf6ee7512c7d0602",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "dCliente"
+                }
+              },
+              "Property": "cidade"
+            }
+          },
+          "howCreated": 1
+        },
+        {
+          "name": "Filter2ce5178d9eae541659c1",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "fVendas"
+                }
+              },
+              "Property": "dia da semana"
+            }
+          },
+          "howCreated": 1
+        }
+      ]
+    },
+    "sections": {
+      "ReportSectiondbedae4082706cac4e35": {
+        "filters": {
+          "byName": {
+            "Filter5783dccf41bf406dc078": {
+              "name": "Filter5783dccf41bf406dc078",
+              "type": "Categorical",
+              "filter": {
+                "Version": 2,
+                "From": [
+                  {
+                    "Name": "d",
+                    "Entity": "dCalendario",
+                    "Type": 0
+                  }
+                ],
+                "Where": [
+                  {
+                    "Condition": {
+                      "In": {
+                        "Expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "d"
+                                }
+                              },
+                              "Property": "Passado"
+                            }
+                          }
+                        ],
+                        "Values": [
+                          [
+                            {
+                              "Literal": {
+                                "Value": "true"
+                              }
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "expression": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCalendario"
+                    }
+                  },
+                  "Property": "Passado"
+                }
+              },
+              "howCreated": 1
+            }
+          }
+        },
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "dbafb55657b09130c12d": {
+            "isHidden": true
+          }
+        }
+      }
+    },
+    "objects": {
+      "merge": {
+        "outspacePane": [
+          {
+            "properties": {
+              "expanded": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "visible": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

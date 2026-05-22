@@ -1,0 +1,56 @@
+table fMetas
+	lineageTag: 36638102-03c5-4a46-849e-ed3e2c6c78e3
+
+	column Data
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6f8fdffa-324f-48fc-9c12-73d3e378fed3
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column categoria_id
+		dataType: string
+		lineageTag: 34df2014-e6b5-4045-b4f8-cc03cf85a14c
+		summarizeBy: none
+		sourceColumn: categoria_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column vendedor_id
+		dataType: string
+		lineageTag: 8eff7eae-af2f-4cfe-9003-373d2d198b87
+		summarizeBy: none
+		sourceColumn: vendedor_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Valor
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 52083c07-5447-40ba-814f-6964793bf2ad
+		summarizeBy: sum
+		sourceColumn: Valor
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	partition fMetas = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\vivid\OneDrive\Área de Trabalho\Projetos Portifolio\7. Comercial\EXPERIUN\Meta_2022.xlsx"), null, true),
+				    metas_Sheet = Fonte{[Item="metas",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(metas_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"Valor", Currency.Type}, {"Data", type date}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

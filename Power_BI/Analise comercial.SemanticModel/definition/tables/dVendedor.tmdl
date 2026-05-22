@@ -1,0 +1,77 @@
+table dVendedor
+	lineageTag: a05d4275-4950-4dcb-8445-4b7031fede9b
+
+	column id
+		dataType: string
+		lineageTag: a06d8a1d-52d4-4f92-a93e-03ae9f2ab6a2
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column descricao
+		dataType: string
+		lineageTag: e45b0374-7727-4beb-92fe-e51d52f2bdb7
+		summarizeBy: none
+		sourceColumn: descricao
+
+		annotation SummarizationSetBy = Automatic
+
+	column supervisor_descricao
+		dataType: string
+		lineageTag: b33f0195-4518-4844-a379-bf7662c05d83
+		summarizeBy: none
+		sourceColumn: supervisor_descricao
+
+		annotation SummarizationSetBy = Automatic
+
+	column gerente_descricao
+		dataType: string
+		lineageTag: 66c0a69b-34a7-4108-a94b-415fa7e87d21
+		summarizeBy: none
+		sourceColumn: gerente_descricao
+
+		annotation SummarizationSetBy = Automatic
+
+	column gerente_id
+		dataType: string
+		lineageTag: e347625c-a37d-401e-8ed6-51e7d7fc738f
+		summarizeBy: none
+		sourceColumn: gerente_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Imagem
+		dataType: string
+		lineageTag: 8ab4f934-6219-4121-b1b2-a0fa087fe9c0
+		dataCategory: ImageUrl
+		summarizeBy: none
+		sourceColumn: Imagem
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column7
+		dataType: string
+		lineageTag: 352f404e-6cb3-4b79-9705-077a1deecad5
+		summarizeBy: none
+		sourceColumn: Column7
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dVendedor = m
+		mode: import
+		queryGroup: Dimensões
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\vivid\OneDrive\Área de Trabalho\Projetos Portifolio\7. Comercial\EXPERIUN\Base.xlsx"), null, true),
+				    #"Linhas Filtradas" = Table.SelectRows(Fonte, each ([Name] = "dVendedor")),
+				    dVendedor_Sheet = #"Linhas Filtradas"{[Item="dVendedor",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(dVendedor_Sheet, [PromoteAllScalars=true]),
+				    #"Linhas Filtradas1" = Table.SelectRows(#"Cabeçalhos Promovidos", each [id] <> 0)
+				in
+				    #"Linhas Filtradas1"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
